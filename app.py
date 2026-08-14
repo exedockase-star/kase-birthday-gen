@@ -34,22 +34,26 @@ if uploaded_file and name and desig:
         rounded_photo.putalpha(mask)
         canvas.paste(rounded_photo, (px, py), rounded_photo)
         
-        # Draw Text (Noto Serif Ethiopic)
+        # Draw Text
         draw = ImageDraw.Draw(canvas)
+        
+        # Font loading: Using local path relative to this script
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        bold_font_path = os.path.join(base_path, "NotoSerifEthiopic-Bold.ttf")
+        reg_font_path = os.path.join(base_path, "NotoSerifEthiopic-Regular.ttf")
+        
         try:
-            # Pointing to the new Ethiopic font files
-            font_bold = ImageFont.truetype(os.path.join(os.path.dirname(__file__), "NotoSerifEthiopic-Bold.ttf"), 45)
-            font_reg = ImageFont.truetype(os.path.join(os.path.dirname(__file__), "NotoSerifEthiopic-Regular.ttf"), 32)
-        except:
+            font_bold = ImageFont.truetype(bold_font_path, 45)
+            font_reg = ImageFont.truetype(reg_font_path, 32)
+        except Exception as e:
+            st.warning(f"⚠️ Font load error: {e}. Using default.")
             font_bold = ImageFont.load_default()
             font_reg = ImageFont.load_default()
-            st.warning("⚠️ Custom fonts not found. Please upload 'NotoSerifEthiopic-Bold.ttf' and 'NotoSerifEthiopic-Regular.ttf' to GitHub.")
         
-        # Spacing reduced to 35
         draw.text((100, text_y), name, fill="black", font=font_bold)
         draw.text((100, text_y + 40), desig, fill="black", font=font_reg)
         
-        # Save and show live preview
+        # Save and show
         final = canvas.convert("RGB")
         final.save("birthday_final.jpg", "JPEG")
         st.image("birthday_final.jpg", use_container_width=True)
