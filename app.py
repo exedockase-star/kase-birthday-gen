@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import os
 
 # Page Title
@@ -8,36 +8,41 @@ st.title("KASE Birthday Wish Generator")
 
 # 1. Inputs
 uploaded_file = st.file_uploader("Upload Employee Photo", type=["jpg", "png", "jpeg"])
-name = st.text_input("Enter Name (e.g., Smt. Yasoda N)")
-designation = st.text_input("Enter Designation (e.g., Junior Executive)")
+name = st.text_input("Enter Name")
+designation = st.text_input("Enter Designation")
 
 # 2. Processing
 if st.button("Generate Birthday Card"):
     if uploaded_file and name and designation:
         try:
-            # Load the base template
+            # Load assets
             template_path = os.path.join(os.path.dirname(__file__), "template.png")
             template = Image.open(template_path).convert("RGBA")
-            
-            # Load and process the uploaded photo
             photo = Image.open(uploaded_file).convert("RGBA")
             
-            # --- ADJUSTED PHOTO SETTINGS ---
-            # Resize photo to fit nicely inside the white ID window (Width, Height)
-            photo = photo.resize((320, 380)) 
+            # --- PHOTO FIT SETTINGS ---
+            # Resize photo to fill the light blue frame
+            photo = photo.resize((315, 360)) 
+            # Paste photo at (68, 285) - Adjust these if needed
+            template.paste(photo, (68, 285)) 
             
-            # Paste photo lower down so it stays inside the card frame (X, Y)
-            template.paste(photo, (95, 310)) 
-            
-            # Add Text
+            # --- TEXT SETTINGS ---
             draw = ImageDraw.Draw(template)
             
-            # Drawing the text at the bottom of the white card
-            # Adjust these Y coordinates if the text is too high or low
-            draw.text((135, 780), name, fill="black")
-            draw.text((135, 820), designation, fill="black")
+            # Define fonts (Uses default font; for custom fonts, upload a .ttf file to your repo)
+            try:
+                # If you upload a .ttf file to your repo, change 'arial.ttf' to your filename
+                font_name = ImageFont.truetype("arial.ttf", 35)
+                font_desig = ImageFont.truetype("arial.ttf", 25)
+            except:
+                font_name = ImageFont.load_default()
+                font_desig = ImageFont.load_default()
+
+            # Drawing the text (X=100, Y=720)
+            draw.text((100, 720), name, fill="black", font=font_name)
+            draw.text((100, 765), designation, fill="black", font=font_desig)
             
-            # Convert to RGB to save as JPEG
+            # Save as JPEG
             final_image = template.convert("RGB")
             final_image.save("birthday_final.jpg", "JPEG")
             
@@ -51,6 +56,6 @@ if st.button("Generate Birthday Card"):
                     mime="image/jpeg"
                 )
         except Exception as e:
-            st.error(f"An error occurred: {e}")
+            st.error(f"Error: {e}")
     else:
-        st.warning("Please upload a photo and fill in both name and designation.")
+        st.warning("Please upload a photo and fill in all fields.")
