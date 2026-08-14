@@ -12,18 +12,18 @@ designation = st.text_input("Enter Designation")
 if st.button("Generate Birthday Card"):
     if uploaded_file and name and designation:
         try:
-            # Load template
+            # 1. Load the template base
             template_path = os.path.join(os.path.dirname(__file__), "template.png")
             canvas = Image.open(template_path).convert("RGBA")
             
-            # Open and resize photo to match the exact tall inner window frame slot
+            # 2. Resize photo to completely fill the inner frame box
             photo = Image.open(uploaded_file).convert("RGBA")
-            photo = photo.resize((290, 335))  # Exact width and height to cover the inner frame
+            photo = photo.resize((305, 335))  # Adjusted width & height to cover the inner border
             
-            # Paste photo precisely into the inner window coordinates
-            canvas.paste(photo, (82, 305))  # Exact X, Y matching the card's inner frame
+            # 3. Paste photo shifted right to align with the frame
+            canvas.paste(photo, (95, 305))  # X=95 moves it right, Y=305 aligns the top
             
-            # Draw Name and Designation text below the photo window
+            # 4. Draw Name and Designation cleanly in the lower white space
             draw = ImageDraw.Draw(canvas)
             
             try:
@@ -33,10 +33,10 @@ if st.button("Generate Birthday Card"):
                 font_name = ImageFont.load_default()
                 font_desig = ImageFont.load_default()
 
-            draw.text((90, 655), name, fill="black", font=font_name)
-            draw.text((90, 695), designation, fill="black", font=font_desig)
+            draw.text((100, 660), name, fill="black", font=font_name)
+            draw.text((100, 700), designation, fill="black", font=font_desig)
             
-            # Save and output final JPG
+            # 5. Save and output final JPG
             final_image = canvas.convert("RGB")
             final_image.save("birthday_final.jpg", "JPEG")
             
