@@ -12,31 +12,31 @@ designation = st.text_input("Enter Designation")
 if st.button("Generate Birthday Card"):
     if uploaded_file and name and designation:
         try:
-            # 1. Load the template as the base background image
+            # Load template
             template_path = os.path.join(os.path.dirname(__file__), "template.png")
             canvas = Image.open(template_path).convert("RGBA")
             
-            # 2. Open and resize the employee photo to fit the upper part of the white box
+            # Open and resize photo to match the exact tall inner window frame slot
             photo = Image.open(uploaded_file).convert("RGBA")
-            photo = photo.resize((285, 275))  # Width, Height
+            photo = photo.resize((290, 335))  # Exact width and height to cover the inner frame
             
-            # 3. Paste the photo right onto the template inside the white box
-            canvas.paste(photo, (90, 310))  # X, Y coordinates
+            # Paste photo precisely into the inner window coordinates
+            canvas.paste(photo, (82, 305))  # Exact X, Y matching the card's inner frame
             
-            # 4. Draw Name and Designation text below the photo
+            # Draw Name and Designation text below the photo window
             draw = ImageDraw.Draw(canvas)
             
             try:
-                font_name = ImageFont.truetype("arial.ttf", 28)
-                font_desig = ImageFont.truetype("arial.ttf", 20)
+                font_name = ImageFont.truetype("arial.ttf", 26)
+                font_desig = ImageFont.truetype("arial.ttf", 18)
             except:
                 font_name = ImageFont.load_default()
                 font_desig = ImageFont.load_default()
 
-            draw.text((100, 600), name, fill="black", font=font_name)
-            draw.text((100, 640), designation, fill="black", font=font_desig)
+            draw.text((90, 655), name, fill="black", font=font_name)
+            draw.text((90, 695), designation, fill="black", font=font_desig)
             
-            # 5. Save and output final JPG
+            # Save and output final JPG
             final_image = canvas.convert("RGB")
             final_image.save("birthday_final.jpg", "JPEG")
             
