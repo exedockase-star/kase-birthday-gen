@@ -8,8 +8,8 @@ st.title("KASE Birthday Wish Generator")
 
 # 1. Inputs
 uploaded_file = st.file_uploader("Upload Employee Photo", type=["jpg", "png", "jpeg"])
-name = st.text_input("Enter Name")
-designation = st.text_input("Enter Designation")
+name = st.text_input("Enter Name (e.g., Smt. Yasoda N)")
+designation = st.text_input("Enter Designation (e.g., Junior Executive)")
 
 # 2. Processing
 if st.button("Generate Birthday Card"):
@@ -22,24 +22,22 @@ if st.button("Generate Birthday Card"):
             # Load and process the uploaded photo
             photo = Image.open(uploaded_file).convert("RGBA")
             
-            # --- ADJUST COORDINATES HERE ---
-            # Resize photo (Width, Height)
-            photo = photo.resize((350, 350)) 
+            # --- ADJUSTED PHOTO SETTINGS ---
+            # Resize photo to fit nicely inside the white ID window (Width, Height)
+            photo = photo.resize((320, 380)) 
             
-            # Paste photo (X, Y) - adjust these numbers based on your template
-            # Coordinates: (left, top)
-            template.paste(photo, (150, 250)) 
+            # Paste photo lower down so it stays inside the card frame (X, Y)
+            template.paste(photo, (95, 310)) 
             
             # Add Text
             draw = ImageDraw.Draw(template)
             
-            # Drawing the text (X, Y) - adjust these based on your template
-            # You can also change the font size if needed
-            draw.text((150, 650), name, fill="black")
-            draw.text((150, 700), designation, fill="black")
+            # Drawing the text at the bottom of the white card
+            # Adjust these Y coordinates if the text is too high or low
+            draw.text((135, 780), name, fill="black")
+            draw.text((135, 820), designation, fill="black")
             
-            # --- FIX: Convert to RGB before saving as JPEG ---
-            # JPEG doesn't support transparency, so we must convert to RGB
+            # Convert to RGB to save as JPEG
             final_image = template.convert("RGB")
             final_image.save("birthday_final.jpg", "JPEG")
             
